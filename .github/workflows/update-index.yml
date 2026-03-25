@@ -1,0 +1,28 @@
+name: Update contributors index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'contributors/**'
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate index.md
+        run: |
+          cd contributors
+          ls -1 *.md | grep -v '^_' | grep -v '^index.md' | sort > index.md
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add contributors/index.md
+          git diff --cached --quiet || git commit -m "chore: auto-update contributors index"
+          git push

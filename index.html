@@ -1456,12 +1456,13 @@ function parseRoom(md, filename) {
       if (m) {
         var rawResult = m[2].trim();
         var collectible = null;
-        var cm = rawResult.match(/\[收藏[：:](.+?)\]\s*$/);
+        var cm = rawResult.match(/\*(.+?)\*\s*$/);
         if (cm) {
           collectible = cm[1].trim();
-          rawResult = rawResult.replace(/\[收藏[：:](.+?)\]\s*$/, '').trim();
+          rawResult = rawResult.replace(/\*(.+?)\*\s*$/, '').trim();
         }
-        interactions.push({ label: m[1].trim(), result: rawResult, collectible: collectible });
+        var interLabel = m[1].trim();
+        interactions.push({ label: interLabel, result: rawResult, collectible: collectible });
       }
     } else if (section === 'exits') {
       var m2 = trimmed.match(/^(.+?)[：:]\s*(.+)$/);
@@ -1504,7 +1505,7 @@ var TRAIT_COLORS = ['#e67e22', '#3498db', '#9b59b6', '#27ae60'];
 var TRAIT_CLASSES = ['trait-action', 'trait-observer', 'trait-adventurer', 'trait-warmheart'];
 
 function traitIdxForInteraction(idx) {
-  // 0 -> action, 1 -> observer, 2 -> adventurer, 3+ -> warmheart
+  // Position-based mapping: 0=action, 1=observer, 2=adventurer, 3+=warmheart
   if (idx <= 2) return idx;
   return 3;
 }
